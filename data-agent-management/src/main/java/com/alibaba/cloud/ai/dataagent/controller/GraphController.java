@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -49,11 +48,7 @@ public class GraphController {
 			@RequestParam(value = "humanFeedback", required = false) boolean humanFeedback,
 			@RequestParam(value = "humanFeedbackContent", required = false) String humanFeedbackContent,
 			@RequestParam(value = "rejectedPlan", required = false) boolean rejectedPlan,
-			@RequestParam(value = "nl2sqlOnly", required = false) boolean nl2sqlOnly, ServerHttpResponse response) {
-		// Set SSE-related HTTP headers
-		response.getHeaders().add("Cache-Control", "no-cache");
-		response.getHeaders().add("Connection", "keep-alive");
-		response.getHeaders().add("Access-Control-Allow-Origin", "*");
+			@RequestParam(value = "nl2sqlOnly", required = false) boolean nl2sqlOnly) {
 
 		Sinks.Many<ServerSentEvent<GraphNodeResponse>> sink = Sinks.many().unicast().onBackpressureBuffer();
 

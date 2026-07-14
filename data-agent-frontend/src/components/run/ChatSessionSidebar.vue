@@ -35,9 +35,9 @@
       <!-- 顶部操作栏 -->
       <div class="sidebar-header">
         <div class="header-controls">
-          <!-- <el-button type="primary" @click="goBack" circle>
+          <el-button type="primary" @click="goBack" circle>
             <el-icon><ArrowLeft /></el-icon>
-          </el-button> -->
+          </el-button>
           <!-- 头像居中 -->
           <el-avatar :src="agent.avatar" size="large" style="margin: 0 auto">
             {{ agent.name }}
@@ -135,6 +135,7 @@
     Edit,
     DArrowLeft,
     DArrowRight,
+    ArrowLeft,
   } from '@element-plus/icons-vue';
   import { type Agent } from '../../services/agent';
   import { type ChatSession } from '../../services/chat';
@@ -161,6 +162,7 @@
       Edit,
       DArrowLeft,
       DArrowRight,
+      ArrowLeft,
     },
     props: {
       agent: {
