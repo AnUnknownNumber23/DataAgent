@@ -16,6 +16,7 @@
 package com.alibaba.cloud.ai.dataagent.controller;
 
 import com.alibaba.cloud.ai.dataagent.service.TokenBlacklistService;
+import com.alibaba.cloud.ai.dataagent.annotation.RateLimit;
 import com.alibaba.cloud.ai.dataagent.service.UserService;
 import com.alibaba.cloud.ai.dataagent.vo.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,7 @@ public class AuthController {
         return ApiResponse.success("注册成功", Map.of("token", token));
     }
 
+    @RateLimit(maxRequests = 20, windowSeconds = 60, message = "登录次数过多，请稍后再试")
     @PostMapping("/login")
     public ApiResponse<Map<String, String>> login(@RequestBody Map<String, String> body) {
         String username = body.get("username");

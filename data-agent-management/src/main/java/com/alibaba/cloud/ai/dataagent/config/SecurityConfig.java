@@ -47,6 +47,8 @@ public class SecurityConfig {
                     "/api/auth/**",
                     "/api/model-config/**",
                     "/api/agent/list",
+                    "/druid/**",
+                    "/actuator/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/v3/api-docs/**"

@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
+import com.alibaba.cloud.ai.dataagent.annotation.RateLimit;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -42,6 +43,7 @@ public class GraphController {
 
 	private final GraphService graphService;
 
+	@RateLimit(maxRequests = 10, windowSeconds = 60, message = "分析请求过于频繁，请60秒后再试")
 	@GetMapping(value = "/stream/search", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<ServerSentEvent<GraphNodeResponse>> streamSearch(@RequestParam("agentId") String agentId,
 			@RequestParam(value = "threadId", required = false) String threadId, @RequestParam("query") String query,
