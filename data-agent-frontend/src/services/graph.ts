@@ -76,6 +76,11 @@ class GraphService {
       params.append('humanFeedbackContent', request.humanFeedbackContent);
     }
 
+    const token = localStorage.getItem('token');
+    if (token) {
+      params.append('token', token);
+    }
+
     const url = `${API_BASE_URL}/stream/search?${params.toString()}`;
 
     const eventSource = new EventSource(url);

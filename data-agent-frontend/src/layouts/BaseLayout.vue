@@ -34,6 +34,10 @@
             </div>
           </nav>
         </div>
+        <div class="user-section">
+          <span class="username">{{ username }}</span>
+          <button class="logout-btn" @click="handleLogout">退出</button>
+        </div>
       </div>
     </header>
 
@@ -46,11 +50,25 @@
 
 <script>
   import { useRouter } from 'vue-router';
+  import { ref } from 'vue';
+  import axios from 'axios';
 
   export default {
     name: 'BaseLayout',
     setup() {
       const router = useRouter();
+      const username = ref(localStorage.getItem('username') || '');
+
+      const handleLogout = async () => {
+        try {
+          await axios.post('/api/auth/logout');
+        } catch (e) {
+          // ignore
+        }
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        router.push('/login');
+      };
 
       // 导航方法
       const goToAgentList = () => {
@@ -75,6 +93,8 @@
       };
 
       return {
+        username,
+        handleLogout,
         goToAgentList,
         goToModelConfig,
         isAgentPage,
@@ -160,6 +180,29 @@
     font-size: 1rem;
   }
 
+  .user-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .username {
+    font-size: 14px;
+    color: #64748b;
+  }
+  .logout-btn {
+    padding: 6px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+  }
   .page-content {
     flex: 1;
     padding: 0;

@@ -277,10 +277,22 @@ public class SchemaServiceImpl implements SchemaService {
 		metadata.put(Constant.DATASOURCE_ID, datasourceId.toString());
 		metadata.put(DocumentMetadataConstant.VECTOR_TYPE, DocumentMetadataConstant.COLUMN);
 
-		agentVectorStoreService.deleteDocumentsByMetadata(metadata);
+		try {
+			agentVectorStoreService.deleteDocumentsByMetadata(metadata);
+		}
+		catch (Exception e) {
+			log.warn("Failed to delete column documents for datasource {} (may not exist yet): {}",
+					datasourceId, e.getMessage());
+		}
 
 		metadata.put(DocumentMetadataConstant.VECTOR_TYPE, DocumentMetadataConstant.TABLE);
-		agentVectorStoreService.deleteDocumentsByMetadata(metadata);
+		try {
+			agentVectorStoreService.deleteDocumentsByMetadata(metadata);
+		}
+		catch (Exception e) {
+			log.warn("Failed to delete table documents for datasource {} (may not exist yet): {}",
+					datasourceId, e.getMessage());
+		}
 	}
 
 	@Override

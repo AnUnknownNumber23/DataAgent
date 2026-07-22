@@ -9,10 +9,28 @@ springdoc:
 
 # 存储 DataAgent 业务数据的数据库，并非Agent分析数据的来源
 spring:
+  main:
+    web-application-type: servlet
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.autoconfigure.vectorstore.elasticsearch.ElasticsearchVectorStoreAutoConfiguration
   datasource:
     url: ${DATA_AGENT_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/saa_data_agent?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai}
     username: ${DATA_AGENT_DATASOURCE_USERNAME:root}
-    password: ${DATA_AGENT_DATASOURCE_PASSWORD:root}
+    password: ${DATA_AGENT_DATASOURCE_PASSWORD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
   sql:
@@ -25,7 +43,14 @@ spring:
       encoding: utf-8
   ai:
     vectorstore:
-      type: simple
+      type: milvus
+    milvus:
+      client:
+        host: localhost
+        port: 19530
+        database: default
+      initialize-schema: true
+      embedding-dimension: 1536
     alibaba:
       data-agent:
         vector-store:
@@ -36,7 +61,9 @@ spring:
         llm-service-type: stream
         code-executor:
           # 运行Python代码的环境（生产环境建议使用docker，不建议使用local）
-          code-pool-executor: local
+          code-pool-executor: docker
+          # Docker镜像
+          image-name: continuumio/anaconda3:latest
           # Python执行的最大重试次数
           python-max-tries-count: 5
         file:

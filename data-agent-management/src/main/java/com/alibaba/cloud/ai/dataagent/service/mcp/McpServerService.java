@@ -44,7 +44,7 @@ public class McpServerService {
 
 	@Tool(description = "查询智能体列表，支持按状态和关键词过滤。可以根据智能体的状态（如已发布PUBLISHED、草稿DRAFT等）进行过滤，也可以通过关键词搜索智能体的名称、描述或标签。返回按创建时间降序排列的智能体列表。")
 	public List<Agent> listAgentsToolCallback(AgentListRequest agentListRequest) {
-		return agentMapper.findByConditions(agentListRequest.status(), agentListRequest.keyword());
+		return agentMapper.findByConditions(agentListRequest.status(), agentListRequest.keyword(), null);
 	}
 
 	// NL2SQL 请求参数

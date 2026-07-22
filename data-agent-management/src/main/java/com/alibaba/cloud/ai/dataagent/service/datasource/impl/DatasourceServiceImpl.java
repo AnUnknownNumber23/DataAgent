@@ -18,6 +18,7 @@ package com.alibaba.cloud.ai.dataagent.service.datasource.impl;
 import com.alibaba.cloud.ai.dataagent.bo.DbConfigBO;
 import com.alibaba.cloud.ai.dataagent.bo.schema.ColumnInfoBO;
 import com.alibaba.cloud.ai.dataagent.bo.schema.TableInfoBO;
+import com.alibaba.cloud.ai.dataagent.util.AesUtil;
 import com.alibaba.cloud.ai.dataagent.connector.DbQueryParameter;
 import com.alibaba.cloud.ai.dataagent.connector.accessor.Accessor;
 import com.alibaba.cloud.ai.dataagent.connector.accessor.AccessorFactory;
@@ -101,6 +102,11 @@ public class DatasourceServiceImpl implements DatasourceService {
 			datasource.setTestStatus("unknown");
 		}
 
+		// 加密密码
+		if (StringUtils.isNotBlank(datasource.getPassword())) {
+			datasource.setPassword(AesUtil.encrypt(datasource.getPassword()));
+		}
+
 		datasourceMapper.insert(datasource);
 		return datasource;
 	}
@@ -114,6 +120,11 @@ public class DatasourceServiceImpl implements DatasourceService {
 			datasource.setConnectionUrl(connectionUrl);
 		}
 		datasource.setId(id);
+
+		// 加密密码（仅当用户修改了密码时才加密，已加密的跳过）
+		if (StringUtils.isNotBlank(datasource.getPassword())) {
+			datasource.setPassword(AesUtil.encrypt(datasource.getPassword()));
+		}
 
 		datasourceMapper.updateById(datasource);
 		return datasource;
@@ -170,7 +181,7 @@ public class DatasourceServiceImpl implements DatasourceService {
 		}
 		config.setUrl(originalUrl);
 		config.setUsername(datasource.getUsername());
-		config.setPassword(datasource.getPassword());
+		config.setPassword(AesUtil.decrypt(datasource.getPassword()));
 
 		DBConnectionPool pool = poolFactory.getPoolByType(datasource.getType());
 		if (pool == null) {
@@ -238,7 +249,12 @@ public class DatasourceServiceImpl implements DatasourceService {
 	@Override
 	public DbConfigBO getDbConfig(Datasource datasource) {
 		DatasourceTypeHandler handler = datasourceTypeHandlerRegistry.getRequired(datasource.getType());
-		return handler.toDbConfig(datasource);
+		DbConfigBO config = handler.toDbConfig(datasource);
+		// 解密密码
+		if (StringUtils.isNotBlank(config.getPassword())) {
+			config.setPassword(AesUtil.decrypt(config.getPassword()));
+		}
+		return config;
 	}
 
 	@Override
