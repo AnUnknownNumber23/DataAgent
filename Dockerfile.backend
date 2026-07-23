@@ -1,0 +1,14 @@
+# 后端构建 + 运行
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY data-agent-management/pom.xml data-agent-management/
+RUN mvn dependency:go-offline -pl data-agent-management -B -q || true
+COPY . .
+RUN mvn package -pl data-agent-management -DskipTests -B -q
+
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/data-agent-management/target/*.jar app.jar
+EXPOSE 8065
+ENTRYPOINT ["java", "-jar", "app.jar"]
