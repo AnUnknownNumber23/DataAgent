@@ -48,7 +48,7 @@ jobs:
         run: cd data-agent-frontend && npm ci
 
       - name: Build
-        run: cd data-agent-frontend && npx vite build
+        run: cd data-agent-frontend && npm run build:ci
 
       - name: Upload Frontend Artifact
         uses: actions/upload-artifact@v4
